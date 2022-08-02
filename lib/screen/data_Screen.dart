@@ -16,7 +16,7 @@ class _Data_ScreenState extends State<Data_Screen> {
     getData();
   }
 
-  void getData()async {
+  Future<void> getData()async {
      DBHelper dbHelper =DBHelper();
     List<Map<String, dynamic>> l1 =await dbHelper.readData();
     setState((){
