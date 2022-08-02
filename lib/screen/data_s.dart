@@ -21,7 +21,7 @@ class DBHelper {
 
     return openDatabase(path, version: 1, onCreate: (db, version) {
       String query =
-          "CREATE TABLE student (id INTEGER PRIMARY KEY AUTOINCREMENT name TEXT no TEXT std TEXT parentname TEXT)";
+          "CREATE TABLE student (id INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT ,no TEXT ,std TEXT ,parentname TEXT)";
       db.execute(query);
     });
   }
@@ -31,5 +31,12 @@ class DBHelper {
     database = await checkDB();
     return await database!.insert("student",
         {"name": name, "no": no, "std": std, "parentname": parentname});
+  }
+
+  Future<List<Map<String, dynamic>>> readData()async {
+    database = await checkDB();
+    String query = "SELECT * FROM student";
+    var res = database!.rawQuery(query);
+    return res;
   }
 }
