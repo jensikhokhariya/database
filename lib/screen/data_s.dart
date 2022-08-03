@@ -33,10 +33,23 @@ class DBHelper {
         {"name": name, "no": no, "std": std, "parentname": parentname});
   }
 
-  Future<List<Map<String, dynamic>>> readData()async {
+  Future<List<Map<String, dynamic>>> readData() async {
     database = await checkDB();
     String query = "SELECT * FROM student";
     var res = database!.rawQuery(query);
     return res;
+  }
+
+  void delete(int id) async {
+    database = await checkDB();
+    database!.delete("student", where: "id=?", whereArgs: [id]);
+  }
+
+  void update(
+      int id, String name, String no, String std, String parentname) async {
+    database = await checkDB();
+    database!.update("student",
+        {"name": name, "no": no, "std": std, "parentname": parentname},
+        where: "id=?", whereArgs: [id]);
   }
 }
