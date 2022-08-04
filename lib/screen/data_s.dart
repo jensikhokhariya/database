@@ -21,16 +21,16 @@ class DBHelper {
 
     return openDatabase(path, version: 1, onCreate: (db, version) {
       String query =
-          "CREATE TABLE student (id INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT ,no TEXT ,std TEXT ,parentname TEXT)";
+          "CREATE TABLE student (id INTEGER PRIMARY KEY AUTOINCREMENT ,name TEXT ,no TEXT ,std TEXT ,parentname TEXT,image BLOB)";
       db.execute(query);
     });
   }
 
   Future<int> insert(
-      String name, String no, String std, String parentname) async {
+      String name, String no, String std, String parentname, String image) async {
     database = await checkDB();
     return await database!.insert("student",
-        {"name": name, "no": no, "std": std, "parentname": parentname});
+        {"name": name, "no": no, "std": std, "parentname": parentname,"image":image});
   }
 
   Future<List<Map<String, dynamic>>> readData() async {

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:database/screen/data_s.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Data_Screen extends StatefulWidget {
   const Data_Screen({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class _Data_ScreenState extends State<Data_Screen> {
   TextEditingController txno = TextEditingController();
   TextEditingController txstd = TextEditingController();
   List<Map<String, dynamic>> l2 = [];
+  XFile? f1;
 
   @override
   void initState() {
@@ -38,9 +42,18 @@ class _Data_ScreenState extends State<Data_Screen> {
             children: [
               ElevatedButton(
                 onPressed: () async {
+                  ImagePicker p1 = ImagePicker();
+                  f1 = await p1.pickImage(source: ImageSource.gallery);
+                },
+                child: Text("Image"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  String imageData = base64Encode(await f1!.readAsBytes());
+
                   DBHelper db = DBHelper();
-                  var res =
-                      await db.insert("Jensi", "8678326489", "12", "Amitbhai");
+                  var res = await db.insert(
+                      "Jensi", "8678326489", "12", "Amitbhai", "$imageData");
                   getData();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -57,25 +70,30 @@ class _Data_ScreenState extends State<Data_Screen> {
                       return ListTile(
                         leading: Text("${l2[index]['id']}"),
                         title: Text("${l2[index]['name']}"),
-                        subtitle:
-                            Text("${l2[index]['parentname']},${l2[index]['no']},${l2[index]['std']}"),
+                        subtitle: Text(
+                            "${l2[index]['parentname']},${l2[index]['no']},${l2[index]['std']}"),
                         trailing: SizedBox(
-                          width: 100,
+                          width: 150,
                           child: Row(
                             children: [
+                              Container(
+                                  height: 30,
+                                  width: 20,
+                                  child: Image.memory(
+                                      base64Decode(l2[index]['image']),fit: BoxFit.fill,)),
                               IconButton(
                                 onPressed: () {
                                   txname = TextEditingController(
                                       text: l2[index]['name']);
                                   txprname = TextEditingController(
                                       text: l2[index]['parentname']);
-                                  txno= TextEditingController(
+                                  txno = TextEditingController(
                                       text: l2[index]['no']);
                                   txstd = TextEditingController(
                                       text: l2[index]['std']);
                                   updateDB(l2[index]['id']);
                                   getData();
-                                  },
+                                },
                                 icon: Icon(
                                   Icons.edit,
                                   color: Colors.green.shade900,
