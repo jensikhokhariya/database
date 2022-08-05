@@ -18,6 +18,7 @@ class _Data_ScreenState extends State<Data_Screen> {
   TextEditingController txstd = TextEditingController();
   List<Map<String, dynamic>> l2 = [];
   XFile? f1;
+  String livedata = "";
 
   @override
   void initState() {
@@ -25,18 +26,59 @@ class _Data_ScreenState extends State<Data_Screen> {
     getData();
   }
 
-  Future<void> getData() async {
+  Future<List<Map<String, dynamic>>> getData({String? std}) async {
     DBHelper dbHelper = DBHelper();
-    List<Map<String, dynamic>> l1 = await dbHelper.readData();
+    List<Map<String, dynamic>> l1 = await dbHelper.readData(std);
     setState(() {
       l2 = l1;
     });
+    return l1;
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            PopupMenuButton(itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: InkWell(
+                    onTap: () {
+                      getData(std: "12");
+                    },
+                    child: Text("12"),
+                  ),
+                ),
+                PopupMenuItem(
+                  child: InkWell(
+                    onTap: () {
+                      getData(std: "10");
+                    },
+                    child: Text("10"),
+                  ),
+                ),
+                PopupMenuItem(
+                  child: InkWell(
+                    onTap: () {
+                      getData(std: "9");
+                    },
+                    child: Text("9"),
+                  ),
+                ),
+                PopupMenuItem(
+                  child: InkWell(
+                    onTap: () {
+                      getData(std: "8");
+                    },
+                    child: Text("8"),
+                  ),
+                ),
+              ];
+            })
+          ],
+        ),
         body: Center(
           child: Column(
             children: [
@@ -63,6 +105,24 @@ class _Data_ScreenState extends State<Data_Screen> {
                 },
                 child: Text("Insert"),
               ),
+              Card(
+                child: Container(
+                  height: 60,
+                  alignment: Alignment.center,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "search",
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        livedata = value;
+                      });
+                      search(livedata);
+                    },
+                  ),
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                     itemCount: l2.length,
@@ -80,7 +140,9 @@ class _Data_ScreenState extends State<Data_Screen> {
                                   height: 30,
                                   width: 20,
                                   child: Image.memory(
-                                      base64Decode(l2[index]['image']),fit: BoxFit.fill,)),
+                                    base64Decode(l2[index]['image']),
+                                    fit: BoxFit.fill,
+                                  )),
                               IconButton(
                                 onPressed: () {
                                   txname = TextEditingController(
@@ -120,6 +182,23 @@ class _Data_ScreenState extends State<Data_Screen> {
         ),
       ),
     );
+  }
+
+  void search(String later) async {
+    List<Map<String, dynamic>> data = await getData();
+    List<Map<String, dynamic>> filterdata = [];
+
+    for (int i = 0; i < data.length; i++) {
+      if (data[i]['name']
+          .toString()
+          .toLowerCase()
+          .contains(later.toLowerCase())) {
+        filterdata.add(data[i]);
+        setState(() {
+          l2 = filterdata;
+        });
+      }
+    }
   }
 
   void updateDB(int id) {
