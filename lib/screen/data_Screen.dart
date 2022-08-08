@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:database/screen/data1.dart';
 import 'package:database/screen/data_s.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -82,6 +83,12 @@ class _Data_ScreenState extends State<Data_Screen> {
         body: Center(
           child: Column(
             children: [
+              ElevatedButton(onPressed: (){
+                EXDB().readData();
+              }, child: Text("Quotes"),),
+              ElevatedButton(onPressed: (){
+                EXDB().readData1();
+              }, child: Text("Quotes"),),
               ElevatedButton(
                 onPressed: () async {
                   ImagePicker p1 = ImagePicker();
